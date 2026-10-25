@@ -7,7 +7,15 @@ const { z } = require('zod');
 const BaseComponentSchema = z.object({
   id: z.string().regex(/^[a-z0-9_-]{1,32}$/, 'Component ID must be 1-32 alphanumeric characters with dashes or underscores'),
   label: z.string().min(1, 'Label cannot be empty').max(60, 'Label cannot exceed 60 characters'),
-  reason: z.string().optional()
+  reason: z.string().optional(),
+  /**
+   * Explicit deployment dependencies: component IDs that must be provisioned before this component.
+   * Validated by BlueprintSchema.superRefine for uniqueness, self-reference, and existence.
+   * Cross-component existence is intentionally delegated to packages/graph (same pattern as connections).
+   */
+  dependsOn: z.array(
+    z.string().regex(/^[a-z0-9_-]{1,32}$/, 'dependsOn entry must be a valid component ID')
+  ).default([])
 });
 
 /**

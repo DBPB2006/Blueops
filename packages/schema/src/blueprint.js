@@ -29,22 +29,71 @@ const BlueprintSchema = z.object({
   connections: z.array(ConnectionSchema).default([])
 }).superRefine((val, ctx) => {
   // Enforce unique component IDs structurally
-  const seenIds = new Set();
+  const seenComponentIds = new Set();
   val.components.forEach((comp, idx) => {
-    if (seenIds.has(comp.id)) {
+    if (seenComponentIds.has(comp.id)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: `Duplicate component ID '${comp.id}' found in blueprint`,
         path: ['components', idx, 'id']
       });
     }
-    seenIds.add(comp.id);
+    seenComponentIds.add(comp.id);
+  });
+
+  // Enforce unique connection IDs structurally
+  const seenConnIds = new Set();
+  val.connections.forEach((conn, idx) => {
+    if (seenConnIds.has(conn.id)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Duplicate connection ID '${conn.id}' found in blueprint`,
+        path: ['connections', idx, 'id']
+      });
+    }
+    seenConnIds.add(conn.id);
+  });
+
+  // Validate each component's dependsOn array:
+  //   - no duplicate target IDs within the array
+  //   - no self-dependency
+  //   - all referenced IDs must exist as component IDs in this blueprint
+  // Cycle detection is delegated to packages/graph (same pattern as connection endpoint checks).
+  val.components.forEach((comp, compIdx) => {
+    const deps = comp.dependsOn || [];
+    const seenDepIds = new Set();
+    deps.forEach((depId, depIdx) => {
+      if (depId === comp.id) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Component '${comp.id}' cannot depend on itself in dependsOn`,
+          path: ['components', compIdx, 'dependsOn', depIdx]
+        });
+      }
+      if (seenDepIds.has(depId)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Duplicate dependsOn entry '${depId}' in component '${comp.id}'`,
+          path: ['components', compIdx, 'dependsOn', depIdx]
+        });
+      } else {
+        seenDepIds.add(depId);
+      }
+      if (!seenComponentIds.has(depId) && depId !== comp.id) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Component '${comp.id}' dependsOn unknown component '${depId}'`,
+          path: ['components', compIdx, 'dependsOn', depIdx]
+        });
+      }
+    });
   });
 });
 
 /**
  * Blueprint Revision Metadata Schema
  * Validates the backend database row / API record wrapping the canonical blueprint definition.
+ * Enforces strict consistency between the outer envelope and inner definition for projectId and version.
  */
 const BlueprintRevisionMetadataSchema = z.object({
   id: z.string().min(1, 'Revision ID is required'),
@@ -55,6 +104,21 @@ const BlueprintRevisionMetadataSchema = z.object({
   approvedBy: z.string().optional().nullable(),
   createdAt: z.union([z.string(), z.date()]).optional(),
   updatedAt: z.union([z.string(), z.date()]).optional()
+}).superRefine((val, ctx) => {
+  if (val.definition && val.definition.projectId !== val.projectId) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: `Revision projectId '${val.projectId}' does not match definition.projectId '${val.definition.projectId}'`,
+      path: ['definition', 'projectId']
+    });
+  }
+  if (val.definition && val.definition.version !== val.version) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: `Revision version '${val.version}' does not match definition.version '${val.definition.version}'`,
+      path: ['definition', 'version']
+    });
+  }
 });
 
 module.exports = {

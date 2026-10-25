@@ -1,0 +1,81 @@
+{
+  "projectId": "proj_storefront_prod",
+  "version": 1,
+  "name": "Storefront Production Architecture",
+  "requirements": {
+    "availability": "survive_server_failure",
+    "budget": "low",
+    "expectedUsers": "moderate",
+    "security": "strict"
+  },
+  "components": [
+    {
+      "id": "web",
+      "kind": "static_frontend",
+      "label": "Web Storefront",
+      "zone": "public",
+      "config": {
+        "runtime": "static",
+        "buildCommand": "npm run build",
+        "outputDir": "dist",
+        "envVars": [
+          "VITE_API_URL"
+        ]
+      },
+      "reason": "Public static frontend single-page application built with React"
+    },
+    {
+      "id": "api",
+      "kind": "api_service",
+      "label": "Backend API",
+      "zone": "public",
+      "replicas": {
+        "min": 2,
+        "max": 4
+      },
+      "config": {
+        "runtime": "node20",
+        "port": 5000,
+        "healthPath": "/health",
+        "buildCommand": "npm ci",
+        "startCommand": "node server.js",
+        "envVars": [
+          "PORT",
+          "NODE_ENV",
+          "DATABASE_URL"
+        ]
+      },
+      "reason": "Public API service scaled across multiple instances for redundancy"
+    },
+    {
+      "id": "db",
+      "kind": "postgres",
+      "label": "Primary Database",
+      "zone": "private",
+      "config": {
+        "version": "15",
+        "backup": {
+          "enabled": true,
+          "retentionDays": 7
+        }
+      },
+      "reason": "Isolated relational database with 7-day automated backup policy"
+    }
+  ],
+  "connections": [
+    {
+      "id": "conn_web_api",
+      "from": "web",
+      "to": "api",
+      "purpose": "sends_requests",
+      "reason": "Frontend sends HTTP API queries to the public backend"
+    },
+    {
+      "id": "conn_api_db",
+      "from": "api",
+      "to": "db",
+      "purpose": "reads_writes",
+      "reason": "Backend API queries and updates the database"
+    }
+  ]
+}
