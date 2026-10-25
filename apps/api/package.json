@@ -1,5 +1,5 @@
 {
-  "name": "server",
+  "name": "@blueops/api",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",

@@ -1,0 +1,15 @@
+{
+  "name": "@blueops/runner",
+  "version": "1.0.0",
+  "description": "BlueOps Runner CLI: Local deployment executor with allowlist enforcement",
+  "bin": {
+    "blueops-runner": "./bin/runner.js"
+  },
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node bin/runner.js",
+    "test": "node --test"
+  },
+  "author": "Balaaditya / DB Prem Bhuvan",
+  "license": "ISC"
+}

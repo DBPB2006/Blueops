@@ -1,0 +1,14 @@
+{
+  "name": "@blueops/graph",
+  "version": "1.0.0",
+  "description": "Graph algorithms (cycle detection, topological sort, dependencies) for BlueOps",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@blueops/schema": "*"
+  },
+  "author": "DB Prem Bhuvan",
+  "license": "ISC"
+}

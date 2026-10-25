@@ -1,0 +1,26 @@
+{
+  "name": "blueops",
+  "version": "1.0.0",
+  "private": true,
+  "description": "BlueOps: Application Deployment Orchestration for Solo Developers and Small Teams",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace=@blueops/web",
+    "dev:api": "npm run dev --workspace=@blueops/api",
+    "build:web": "npm run build --workspace=@blueops/web",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "keywords": [
+    "blueops",
+    "devops",
+    "orchestration",
+    "blueprint",
+    "terraform"
+  ],
+  "author": "DB Prem Bhuvan",
+  "license": "ISC"
+}

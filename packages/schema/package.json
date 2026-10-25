@@ -1,0 +1,14 @@
+{
+  "name": "@blueops/schema",
+  "version": "1.0.0",
+  "description": "Canonical Zod schemas and fixtures for BlueOps",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "dependencies": {
+    "zod": "^3.24.2"
+  },
+  "author": "DB Prem Bhuvan",
+  "license": "ISC"
+}

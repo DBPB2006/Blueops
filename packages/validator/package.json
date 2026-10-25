@@ -1,0 +1,15 @@
+{
+  "name": "@blueops/validator",
+  "version": "1.0.0",
+  "description": "Shared universal validator for BlueOps (browser & server)",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@blueops/schema": "*",
+    "@blueops/graph": "*"
+  },
+  "author": "DB Prem Bhuvan",
+  "license": "ISC"
+}
