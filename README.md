@@ -1,7 +1,7 @@
 # BlueOps 🚀
 
 > **Application Deployment Orchestration for Solo Developers and Small Teams**  
-> *Deploy an application without being a DevOps expert.*
+> *Deploy cloud applications with confidence without being a DevOps expert.*
 
 [![Node.js](https://img.shields.io/badge/Node.js-v18+-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
@@ -15,41 +15,44 @@
 
 ---
 
-## 📖 Executive Summary
+## 📖 What is BlueOps?
 
-Deploying modern cloud applications today requires mastering an overwhelming, fragmented landscape of technologies: writing multi-stage Dockerfiles, provisioning VPCs and subnets, designing security groups, writing complex Infrastructure-as-Code (Terraform/OpenTofu), configuring managed databases and automated backups, setting up reverse proxies with SSL/TLS certificates, constructing CI/CD pipelines, and tuning auto-scaling rules. For solo developers, startups, and small engineering teams, this DevOps burden distracts from building product value and introduces severe operational and security risks.
+Deploying modern web applications to the cloud is notoriously complex. Developers are forced to navigate an overwhelming array of fragmented technologies: writing multi-stage Dockerfiles, designing VPC network topologies, configuring security groups and reverse proxies, provisioning managed databases, configuring backups, wiring CI/CD pipelines, and writing complex Infrastructure-as-Code (Terraform).
 
-**BlueOps** eliminates this friction. It translates application code and high-level developer intent—expressed in plain English (e.g., uptime, downtime tolerance, expected users, budget)—into deterministic, validated cloud infrastructure. 
+For solo developers, startups, and agile teams, this DevOps burden creates significant overhead and security risk.
 
-BlueOps strictly decouples the **Control Plane** (codebase analysis, AI-assisted architecture, interactive visual canvas, and pre-flight validation) from an **Execution Plane** (the user-controlled **BlueOps Runner**). By design, **cloud credentials never leave your local environment**, BlueOps never hosts your application, and untrusted user code is never executed on BlueOps servers.
+**BlueOps** solves this by translating application code and high-level requirements—expressed in plain terms (such as downtime tolerance, availability, expected users, and budget)—into deterministic, production-grade cloud infrastructure.
+
+BlueOps introduces an architectural separation between a central **Control Plane** (analysis, blueprint modeling, and pre-flight validation) and a local **Execution Plane** (the user-side **BlueOps Runner**). Under this model:
+- **Cloud credentials never leave your local environment.**
+- **BlueOps never hosts your application or data.**
+- **Untrusted user application code is never executed on BlueOps servers.**
 
 ---
 
-## ⚖️ Core Philosophy: What BlueOps Is and Is NOT
+## ⚖️ What BlueOps Is and Is NOT
 
 | What BlueOps IS | What BlueOps Is NOT |
 | :--- | :--- |
-| **A Deployment Orchestrator**: Translates code + plain requirements into validated infrastructure. | **NOT a Hosting Platform (PaaS)**: We do not run your containers or databases on our own servers. |
-| **A Separation of Planes**: Control plane designs and validates; local Runner executes. | **NOT a Black-Box AI Code Generator**: AI never writes raw Terraform or executes infrastructure commands directly. |
-| **Technology-Agnostic Single Source of Truth**: Architecture is modeled in an abstract **Blueprint**, independent of cloud providers. | **NOT Just a Terraform GUI**: The internal model is cloud-independent; Terraform is simply one generator target. |
-| **Zero-Credential Architecture**: Cloud access keys and IAM credentials stay strictly on your local machine. | **NOT an Arbitrary Remote Shell**: The Runner executes only deterministic, allowlisted commands. |
+| **A Deployment Orchestrator**: Translates code + requirements into validated, production-ready infrastructure. | **NOT a Hosting Platform (PaaS)**: Does not run your containers or databases on third-party shared servers. |
+| **A Separation of Planes**: Control plane designs and validates; local Runner executes. | **NOT a Black-Box AI Code Generator**: AI never directly writes raw Terraform or executes cloud commands without guardrails. |
+| **Cloud-Agnostic Single Source of Truth**: Architecture is modeled in a clean **Blueprint**, decoupled from cloud providers. | **NOT Just a Terraform GUI**: The internal architecture model is technology-independent; Terraform is an output target. |
+| **Zero-Credential Architecture**: Cloud keys and IAM credentials stay strictly on your local machine. | **NOT an Arbitrary Remote Shell**: The Runner executes only deterministic, allowlisted deployment commands. |
 
 ---
 
-## 🛡️ The 6 Ironclad Team Rules
+## 🏛️ Core Architectural Principles
 
-All modules, architectures, and pull requests in BlueOps strictly adhere to these 6 core principles:
-
-1. **The Blueprint is the single source of truth**; the visual canvas is only a view.
-2. **The canvas shows logical placement and relationships only**—never raw Docker, Kubernetes, VPC, subnet, or AWS service terms.
-3. **AI only proposes**; deterministic validators and the capability catalog decide what is allowed.
-4. **Blueprint versions are immutable**; they are never overwritten. Every edit creates a new version (`Draft` ➔ `Validated` ➔ `Generated` ➔ `Deployed`).
-5. **The Runner runs only allowlisted commands**; cloud credentials never leave the user's machine.
-6. **Never run the user's uploaded code**; static analysis only reads repository files.
+1. **The Blueprint is the Single Source of Truth**: The visual canvas is strictly a projection. Infrastructure generators build from the validated Blueprint, never from raw canvas coordinates.
+2. **Logical Abstractions on the Canvas**: The studio represents systems in human terms—Public/Private zones, service responsibilities, and connection purposes—not provider-specific jargon.
+3. **AI Only Proposes; Deterministic Rules Enforce**: LLMs can recommend strategies, but rigid schema contracts, graph cycle checkers, and capability catalogs decide what is valid.
+4. **Immutable Blueprint Versions**: Blueprints follow an immutable lifecycle (`Draft` ➔ `Validated` ➔ `Generated` ➔ `Deployed`). Every change produces a distinct revision.
+5. **Zero Credential Exposure**: The Runner executes allowlisted commands locally with local cloud credentials.
+6. **Safe Static Analysis**: Repositories are scanned statically without executing untrusted code.
 
 ---
 
-## 🏛️ Architectural Planes & Security Boundary
+## 🏗️ System Architecture & Planes
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
@@ -119,32 +122,30 @@ All modules, architectures, and pull requests in BlueOps strictly adhere to thes
 
 ---
 
-## 🔄 The 11-Step End-to-End Lifecycle
+## 🔄 How It Works: The 11-Step Lifecycle
 
-1. **Upload Repository**: The developer provides a Git repository link or zip archive. The API unzips safely (protected against zip-slip) without running code.
-2. **Static Analysis**: A pure Node.js scanner inspects package dependencies (`package.json`), build scripts, and `.env.example` to detect runtimes, frameworks, and database drivers.
-3. **Deployment Strategies**: AI suggests 2–3 viable deployment options with clear trade-offs, strictly bounded by the hardcoded **Capability Catalog**.
-4. **Requirements Gathering**: The user specifies operational needs in plain language (e.g., availability, budget, downtime tolerance), parsed into typed schema fields.
-5. **Blueprint Proposed**: AI drafts a technology-independent Blueprint. The shared validator verifies it **before** the user ever sees it.
-6. **Blueprint Studio (Visual Canvas)**: The user views and edits components, Public/Private zones, replicas, and connections in React Flow. Every edit runs client-side validation with real-time issue badges and automated **Fix** actions.
-7. **Approval Gate**: Approval is disabled if any validation errors exist. Upon approval, the server re-validates independently and commits a new, immutable locked version (`Draft` ➔ `Validated`).
-8. **Artifact Generation**: Deterministic template engines generate Dockerfiles, `docker-compose.yml`, and AWS Terraform manifests. Each file is tagged as `execute` (for the Runner) or `deliver` (for the user).
-9. **Deployment Plan Review**: A structured dry-run plan (e.g., parsed `terraform plan`) is presented for explicit user review.
-10. **Runner Execution**: The local Runner receives the allowlisted Execution Job, uses local AWS credentials, provisions cloud resources, and streams real-time status and logs.
-11. **History & Audit**: Detailed execution logs, deployment status, and the exact deployed Blueprint version are recorded immutably in PostgreSQL.
+1. **Upload Repository**: Developer provides a Git repository link or zip archive. Safely extracted and unpacked.
+2. **Static Analysis**: A pure Node.js scanner inspects package dependencies (`package.json`), build scripts, and configurations to detect runtimes, frameworks, and databases without executing code.
+3. **Deployment Strategies**: Recommended deployment topologies with clear trade-offs are presented, constrained by a deterministic capability catalog.
+4. **Requirements Gathering**: The user specifies operational needs in plain terms (availability, budget, downtime tolerance).
+5. **Blueprint Proposed**: A candidate Deployment Blueprint is generated and automatically pre-flight validated before display.
+6. **Blueprint Studio (Visual Canvas)**: The architecture is visualized in an interactive React Flow canvas. Developers can adjust components, replicas, and network zones with real-time validation badges and automated inline fixes.
+7. **Approval Gate**: Approval requires zero validation errors. Upon approval, the server re-validates and locks a new, immutable Blueprint version.
+8. **Artifact Generation**: Deterministic template engines generate Dockerfiles, `docker-compose.yml`, and AWS Terraform manifests.
+9. **Deployment Plan Review**: A structured dry-run plan (such as `terraform plan` output) is generated for user inspection.
+10. **Runner Execution**: The local BlueOps Runner executes the allowlisted plan using the developer's local AWS credentials, streaming live status and logs.
+11. **History & Monitoring**: Deployment status, execution logs, and exact version history are preserved in PostgreSQL for auditing and rollbacks.
 
 ---
 
 ## 📐 The Deployment Blueprint Contract
 
-The **Deployment Blueprint** is the central contract of BlueOps, declared using [Zod](https://zod.dev/) in [`packages/schema`](file:///Users/dbprembhuvan/Desktop/blueops/packages/schema).
+The **Deployment Blueprint** is the central schema contract declared in [`packages/schema`](file:///Users/dbprembhuvan/Desktop/blueops/packages/schema):
 
-### Communication vs. Deployment Dependencies
-BlueOps strictly decouples **communication topology** from **deployment dependencies**:
-- **Connections (`connections`)**: Directed logical communication channels with descriptive semantic purposes (`sends_requests`, `reads_writes`, `publishes_to`, `consumes_from`). Used for network security and firewall configuration.
-- **Explicit Dependencies (`dependsOn`)**: An explicit array of component IDs declaring operational startup order (e.g., an API component depends on a Database component). [`packages/graph`](file:///Users/dbprembhuvan/Desktop/blueops/packages/graph) constructs a separate dependency DAG to compute deterministic deployment order and detect deadlocks/cycles.
+- **Logical Connections (`connections`)**: Directed communication pathways defining network relationships and security boundaries (`sends_requests`, `reads_writes`, `publishes_to`, `consumes_from`).
+- **Explicit Dependencies (`dependsOn`)**: An explicit list of prerequisite component IDs used to determine operational startup and deployment order via a dedicated DAG in [`packages/graph`](file:///Users/dbprembhuvan/Desktop/blueops/packages/graph).
 
-### Blueprint Example
+### Example Blueprint
 ```json
 {
   "version": 1,
@@ -200,7 +201,7 @@ BlueOps strictly decouples **communication topology** from **deployment dependen
 
 ---
 
-## 📂 Monorepo Structure
+## 📂 Repository Structure
 
 BlueOps is organized as an `npm workspaces` monorepo:
 
@@ -217,45 +218,23 @@ blueops/
 │   ├── validator/         # Shared browser/server pre-flight validation rules & issue format
 │   └── generators/        # Deterministic IaC code generators: Docker & Terraform for AWS
 │
-├── docs/                  # Architectural documentation, specs, and handbook notes
-├── BlueOps_Team_Guide.docx # Authoritative 6-week execution guide & team agreements
-├── BlueOps_Project_Handbook.pdf # Comprehensive background theory & system architecture
-└── package.json           # Monorepo workspace root configuration
+├── docs/                  # Architecture notes and specifications
+└── package.json           # Monorepo workspace configuration
 ```
 
 ---
 
-## 👥 Team Roles & Responsibilities
-
-The project is executed over a 6-week timeline (October 26 – December 6, 2026):
-
-| Team Member | Role | Core Ownership & Deliverables |
-| :--- | :--- | :--- |
-| **Prem Bhuvan** | **Team Lead** | Blueprint Core (`packages/schema`, `packages/graph`, `packages/validator`), Capability Catalog, Generator Interface, Runner Protocol & Security Design, Handbook Updates, System Integration. |
-| **Pradeep** | **Platform Backend** | Platform API (`apps/api`), PostgreSQL + Prisma schema/migration, Version Lifecycle & Server Approval Gate, Docker Generator (`packages/generators/docker`), History APIs. |
-| **Sruthi** | **Cloud & IaC** | AWS Terraform Generator (`packages/generators/terraform-aws`), Generator Compatibility Rules (`supports()`), AWS Test Environment & Billing Alarm, Execution Job Allowlist co-design. |
-| **Manoj** | **Frontend** | Web Application (`apps/web`), Blueprint Studio Canvas, Shared UI Components, Logical Canvas Mappers, Real-Time Issues Bar & Fix Actions, Plan Review & History screens. |
-| **Deeraj** | **Analyzer & AI** | Static Codebase Scanner (`apps/api/src/modules/analysis`), AI Strategy Recommendation & Requirements Interpretation (`modules/ai`), Upload & Analysis Wizards. |
-| **Balaaditya** | **Runner & Execution** | BlueOps Runner CLI (`apps/runner`), Execution Job Engine, WebSocket Log Protocol, Terraform Plan Data Parsing, Scanner pairing. |
-
----
-
-## 🛠️ Technology Stack & Decisions
-
-Per the authoritative **BlueOps Team Guide**, the active technology stack is:
+## 🛠️ Technology Stack
 
 - **Monorepo**: npm workspaces
-- **Frontend**: React 19 + Vite + React Flow (`@xyflow/react`) + Tailwind CSS
-- **Backend API**: Node.js + Express
-- **Database**: PostgreSQL with Prisma ORM (local containerized Postgres via Docker Compose; Blueprint revisions stored as JSONB with `UNIQUE(project_id, version_number)`)
-- **Authentication**: JWT tokens (Bearer auth)
+- **Frontend**: React 19, Vite, React Flow (`@xyflow/react`), Tailwind CSS
+- **Backend**: Node.js, Express
+- **Database**: PostgreSQL with Prisma ORM (Docker Compose for local containerized Postgres)
 - **Validation**: Zod (shared across browser and server)
 - **Graph Algorithms**: Pure JavaScript directed graph engine (Kahn's topological sort, Tarjan/DFS cycle detection)
-- **Infrastructure Generation**: Template-based deterministic generation targeting Terraform on AWS (VPC, ECS/Fargate, RDS PostgreSQL, ALB)
-- **Containerization**: Docker & Docker Compose generator
-- **Execution**: Node.js CLI runner with strict command allowlisting
-
-*(Note: Where the Team Guide conflicts with the earlier Project Handbook regarding languages or frameworks, the Team Guide is the authoritative source).*
+- **Infrastructure Targets**: Terraform on AWS (VPC, ECS/Fargate, RDS PostgreSQL, ALB)
+- **Containerization**: Docker & Docker Compose
+- **Execution Runner**: Node.js CLI with allowlisted command execution
 
 ---
 
@@ -264,8 +243,8 @@ Per the authoritative **BlueOps Team Guide**, the active technology stack is:
 ### 1. Prerequisites
 - **Node.js**: v18.0.0 or higher
 - **npm**: v9.0.0 or higher
-- **Docker & Docker Compose**: For local PostgreSQL database and container testing
-- **AWS CLI** *(Optional, for deployment testing)*: Configured with local test credentials
+- **Docker & Docker Compose**: For local PostgreSQL and container workflows
+- **AWS CLI** *(Optional)*: Configured with credentials if testing deployments
 
 ### 2. Installation
 Clone the repository and install all workspace dependencies from the root:
@@ -292,7 +271,7 @@ JWT_SECRET=your_super_secret_jwt_key
 JWT_EXPIRES_IN=1d
 ```
 
-### 4. Running the Database (PostgreSQL)
+### 4. Database Setup (PostgreSQL)
 Start the local PostgreSQL container using Docker Compose:
 
 ```bash
@@ -301,7 +280,7 @@ npx prisma migrate dev --name init
 ```
 
 ### 5. Running the Application
-From the repository root, you can run individual services or workspaces:
+From the repository root:
 
 ```bash
 # Start the Backend API (port 6700)
@@ -310,7 +289,7 @@ npm run dev:api
 # Start the Frontend Web Studio (port 5173)
 npm run dev:web
 
-# Or run the Runner CLI
+# Run the Runner CLI
 node apps/runner/bin/blueops-runner.js --help
 ```
 
@@ -318,16 +297,16 @@ node apps/runner/bin/blueops-runner.js --help
 
 ## 🧪 Testing & Verification
 
-BlueOps enforces high test coverage and strict regression prevention across its core libraries.
+BlueOps includes test suites across its core packages:
 
 ```bash
 # Run all workspace test suites
 npm test
 
-# Run Schema contract tests (18 tests passing)
+# Run Schema contract tests
 npm test --workspace=@blueops/schema
 
-# Run Graph algorithms & dependency sorting tests (47 tests passing)
+# Run Graph algorithms & dependency sorting tests
 npm test --workspace=@blueops/graph
 
 # Run Validator rules tests
@@ -336,31 +315,13 @@ npm test --workspace=@blueops/validator
 
 ---
 
-## 🤝 Contribution & Git Workflow
+## 📚 Core Concepts & Glossary
 
-All contributors follow the team working agreement outlined in **Team Guide Section A9**:
-
-1. **Branch Naming**: All branches must follow the convention `feature/<name>-<task>` (e.g., `feature/prem-blueprint-core`, `feature/pradeep-prisma-migration`).
-2. **Pull Requests**: Direct pushes to `main` are strictly prohibited. Every merge requires an approved Pull Request with at least one reviewer.
-3. **No Secrets**: Never commit `.env` files or credentials. All environment files are `.gitignore`d.
-4. **Clean Commits**: Write clear, imperative commit messages (`feat: add deployment dependency graph`, `fix: handle dangling connection references`).
-5. **Contract Changes**: Any changes to shared schemas (`@blueops/schema`), execution job formats, or generator interfaces must be reviewed and approved by the Team Lead (**Prem Bhuvan**).
-
----
-
-## 📚 Key Glossary
-
-- **Blueprint**: The technology-independent, schema-validated JSON description of the system architecture. The single source of truth.
-- **Canvas / Blueprint Studio**: The interactive visual workspace where developers view and manipulate architecture components and zones.
-- **Layout**: Canvas presentation data (x/y coordinates, zoom level), kept strictly separate from the Blueprint.
-- **Mapper**: Pure function that converts canvas edits into an updated draft Blueprint.
-- **Validator**: Shared browser/server engine returning standardized issues (`{ severity, code, message, target, fix }`).
-- **Capability Catalog**: Deterministic rule table specifying allowed architectural strategies and constraints.
-- **Runner**: Standalone client CLI that executes deployment jobs locally using the user's cloud credentials.
+- **Blueprint**: The technology-independent, schema-validated JSON description of the application architecture. The single source of truth.
+- **Blueprint Studio**: The interactive visual canvas where developers model and review application architecture.
+- **Layout**: Visual coordinate data (x, y positions, zoom), maintained separately from the logical Blueprint.
+- **Validator**: Shared engine returning structured issues (`{ severity, code, message, target, fix }`) across structural, security, configuration, and dependency rules.
+- **Runner**: Standalone client CLI executing deployment jobs locally with the user's cloud credentials.
 - **Execution Job**: The exact, allowlisted list of commands that the Runner is permitted to execute.
-- **Zone**: Logical security boundary—`public` (internet-facing) or `private` (internal/isolated).
-- **dependsOn**: Explicit array of component IDs declaring operational startup dependencies, decoupled from communication links.
-
----
-
-
+- **Zone**: Logical security placement—`public` (internet-facing) or `private` (internal/isolated).
+- **dependsOn**: Explicit array of prerequisite component IDs declaring startup and provisioning order.
