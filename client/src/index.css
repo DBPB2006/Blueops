@@ -1,0 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-enerblock-red: #ff4d4d;
+  --color-enerblock-dark: #0f0f0f;
+  --color-enerblock-light: #f0f0f0;
+  --color-enerblock-gray: #d9d9d9;
+  
+  --font-headline: "Archivo Narrow", sans-serif;
+  --font-display: "Archivo Narrow", sans-serif;
+  --font-body: "Hanken Grotesk", sans-serif;
+  --font-label: "JetBrains Mono", monospace;
+
+  --text-8xl: 6rem;
+  --text-9xl: 8rem;
+  --text-10xl: 10rem;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-body);
+    background-color: var(--color-enerblock-light);
+    color: var(--color-enerblock-dark);
+  }
+  
+  h1, h2, h3, h4, h5, h6, .headline {
+    font-family: var(--font-headline);
+  }
+  
+  .mono {
+    font-family: var(--font-label);
+  }
+}
+
+
+
+/* React Flow Overrides for Blueprint aesthetic */
+.react-flow__node {
+  border-radius: 0 !important;
+}
+
+.react-flow__handle {
+  width: 12px;
+  height: 12px;
+  border-radius: 0 !important;
+  background: #ff4d4d !important;
+  border: 1px solid #0f0f0f !important;
+}
+
+.react-flow__edge-path {
+  stroke: #0f0f0f !important;
+  stroke-width: 1px !important;
+  stroke-dasharray: 4;
+}
+
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: #ff4d4d !important;
+  stroke-width: 2px !important;
+  stroke-dasharray: 0;
+}
+
+@keyframes slide-left {
+  from { transform: translateX(20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translate(-50%, 10px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.animate-slide-left {
+  animation: slide-left 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Drafting Table Background */
+.bg-drafting-table {
+  background: radial-gradient(
+    circle at center,
+    var(--color-enerblock-light) 0%,
+    #e8e8e8 100%
+  );
+}
+
+/* Dynamic Region Styles */
+.region-layer {
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
