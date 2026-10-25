@@ -363,6 +363,4 @@ All contributors follow the team working agreement outlined in **Team Guide Sect
 
 ---
 
-## 📄 License
 
-This project is licensed under the ISC License. Copyright (c) 2026 DB Prem Bhuvan & The BlueOps Team.
